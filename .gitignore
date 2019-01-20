@@ -1,7 +1,4 @@
-*
-
-!.gitignore
-!favicon.ico
-!index.html
-!README.md
-!/dist/
+package-lock.json
+package.json
+script.js
+node_modules/
