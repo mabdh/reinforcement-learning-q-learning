@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="icon" href="./favicon.ico">
+    <title>Reinforcement Learning - Q-Learning</title>
+
+    <style>
+    
+    #overlay {
+        position: fixed; /* Sit on top of the page content */
+        display: none; /* Hidden by default */
+        width: 100%; /* Full width (cover the whole page) */
+        height: 100%; /* Full height (cover the whole page) */
+        top: 0; 
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+        z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+        cursor: pointer; /* Add a pointer on hover */
+        }
+        #text{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 50px;
+  color: white;
+  transform: translate(-50%,-50%);
+  -ms-transform: translate(-50%,-50%);
+}
+    </style>
+  </head>
+  <body>
+  <nav class="navbar navbar-light bg-light">
+  <a class="navbar-brand">Reinforcement Learning - Simulation in Grid World using Q-Learning</a>
+  <form class="form-inline">
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModal">
+    How To
+    </button>
+
+  </form>
+  </nav>
+  <div id="overlay"><div id="text">Training agent...</div></div>
+  <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">How To</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <p>
+        A snowman lives in a dangerous place. Its home is a tent. However, there are many locations with high intensity radiation. The snowman is going home but it does not know yet which lane are the safest.
+        Our algorithm will make snowman decide the most optimal (safest) trajectory to the home (a tent).
+        <br>
+        There are several parameters that can be modified in this simulation.
+        <ul>
+            <li>Grid Size (Integer)</li>
+            <li>Start Point (Integer,Integer) - starting point of the snowman</li>
+            <li>Finish Point (Integer,Integer) - location of the tent</li>
+            <li>Number of Obstacles per Row (Integer) - At most n obstacles per row. Will be randomized.</li>
+            <li>Number of episodes (Integer) - For training purpose. The more episode, the more chance to learn.</li>
+        </ul>
+      </p>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="container">
+        <div class="row justify-content-md-center" style="margin-top: 40px;">
+            <div id="in-title" >
+                
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col-sm">
+                <canvas id="canvas" width="200" height="100" style="border:1px solid #000000;">
+                </canvas>
+            </div>
+            <div class="col-sm">
+            <div class="input-group input-group-sm mb-3">
+                <input id="txt-grid-size" type="number" class="form-control" placeholder="Grid Size nxn (default 4)" aria-label="Grid Size nxn" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button id="button-grid-size-n" class="btn btn-outline-secondary" type="button">Rebuild</button>
+                </div>
+            </div>
+            <div class="input-group input-group-sm mb-3">
+                <input id="txt-start-point"type="text" class="form-control" value="0,2" aria-label="Assign Start Point" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button id="button-assign-start" class="btn btn-outline-secondary" type="button">Assign Start</button>
+                </div>
+            </div>
+            <div class="input-group input-group-sm mb-3">
+                <input id="txt-finish-point"type="text" class="form-control" value="2,3" aria-label="Assign Finish Point" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button id="button-assign-finish" class="btn btn-outline-secondary" type="button">Assign Finish</button>
+                </div>
+            </div>
+            <div class="input-group input-group-sm mb-3">
+                <input id="txt-num-obstacles" type="text" class="form-control" placeholder="Number of Obstacles per Row (default 1)" aria-label="Number of Obstacles per Row" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button id="button-num-obstacles-per-row" class="btn btn-outline-secondary" type="button">Randomize</button>
+                </div>
+            </div>
+            <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Number of Episode</span>
+                </div>
+                <input id="txt-num-episode" type="number" value="5000" class="form-control" aria-label="Number of Episode" aria-describedby="inputGroup-sizing-sm">
+            </div>
+            <div class="input-group input-group-sm mb-3">
+                    <button id="button-train" type="button" class="btn btn-primary btn-lg" style="margin: 0 auto;float: none;">Train</button>
+                    <!---<button id="button-play" type="button" class="btn btn-success btn-lg" style="margin: 0 auto;float: none;">Play</button>-->
+            </div>
+            </div>
+            
+
+        </div>
+        <!--<div class="row justify-content-md-center">
+            <div class="col-sm">
+            </div>
+            <div class="col-sm">
+
+                <div class="progress">
+ 
+            </div>
+            <div class="col-sm">
+            </div>
+            
+
+        </div>-->
+        
+       
+
+           
+
+        
+    </div>
+    <!-- Footer -->
+<footer class="page-footer font-small blue pt-4">
+
+   
+    <!-- Copyright -->
+    <div class="footer-copyright text-center py-3">© 2019 Copyright
+      <a href="http://mabdh.github.io/"> Muhammad Abduh</a>
+    </div>
+    <!-- Copyright -->
+
+  </footer>
+  <!-- Footer -->
+    
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="dist/bundle.js"></script>
+  </body>
+</html>
